@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import config from '../config.json';
@@ -33,7 +33,8 @@ function MovieDetails({ id, locationState }) {
     const [recommendedMovies, setRecommendedMovies] = React.useState([]);
     const [recommendedMovies2, setRecommendedMovies2] = React.useState([]);
     // const { state } = useContext(AuthContext);
-    const [youtubeVideo, setYoutubeVideo] = React.useState({});
+    const [youtubeVideo, setYoutubeVideo] = React.useState([]);  // response.data.results
+    const [finalYoutubeVideo, setFinalYoutubeVideo] = React.useState({}); 
     const [youtubeLoading, setYoutubeLoading] = React.useState(true);
     // config.ApiUrl need to be updated during Frontend set up lab.
     const config_api_url = config.ApiUrl;
@@ -70,10 +71,30 @@ function MovieDetails({ id, locationState }) {
         const response = await axios.get(
           Tmdb_api_getVideo,
         );
+
         console.log('[MovieDetails] (loadYoutubeInfo) response : ',(response));
-        console.log('[MovieDetails] (loadYoutubeInfo) response.id : ',response.data.id);
-        console.log('[MovieDetails] (loadYoutubeInfo) response.result : ',response.data.results);
-        setYoutubeVideo((response.data))
+        console.log('[MovieDetails] (loadYoutubeInfo) response.data.id : ',response.data.id);
+        console.log('[MovieDetails] (loadYoutubeInfo) response.data.result.result : ',response.data.results);
+        
+        // 1개 이상일때 final찾기.
+        let finalYoutube = {};
+        if (response.data.results.length !== 0) {
+          finalYoutube = response.data.results[0]; // 일단 첫번째꺼 할당.
+          for (let i = 0 ; i < response.data.results.length ; i++){
+            
+            if (response.data.results[i].official === 'true'){
+              finalYoutube = response.data.results[i]; // official인거 찾으면 변경.
+              console.log("name",finalYoutube.name);
+              console.log("key",finalYoutube.key);
+              console.log("official",finalYoutube.official);
+              break;
+            }
+          }  
+        }
+
+        setYoutubeVideo((response.data.results));
+        setFinalYoutubeVideo(finalYoutube);
+        // setYoutubeVideo(finalYoutube);
         setYoutubeLoading(false);
 
         // document.title = `${response.data.title} - Pebble World`;
@@ -86,6 +107,7 @@ function MovieDetails({ id, locationState }) {
         setLoading(true);
         setYoutubeVideo({});
         setYoutubeLoading(true);
+        setFinalYoutubeVideo([]);
       };
     }, [id, locationState]);
 
@@ -114,14 +136,27 @@ function MovieDetails({ id, locationState }) {
     const onClickWatchButton = () => {
       console.log(`[MovieDetails] (onClickWatchButton) EVENT_TYPE: 'click', movieId: ${movie.id}, UserId:${UserId}`);
       trackEvent({ EVENT_TYPE: 'click', movieId: `${movie.id}`, UserId:`${UserId}` }); 
-      console.log(`[MovieDetails]  youtubeVideo cnt: ${youtubeVideo.results.length}`);
-      console.log(`[MovieDetails]  youtubeVideo id: ${youtubeVideo.results[0].id}`);
-      console.log(`[MovieDetails]  youtubeVideo key: ${youtubeVideo.results[0].key}`);
-      console.log(`[MovieDetails]  youtubeVideo name: ${youtubeVideo.results[0].name}`);
-      console.log(`[MovieDetails]  youtubeVideo size: ${youtubeVideo.results[0].size}`);
-      console.log(`[MovieDetails]  youtubeVideo type: ${youtubeVideo.results[0].type}`);
-      return (<MoviePlayer />);
+      // console.log(`[MovieDetails]  youtubeVideo cnt: ${youtubeVideo.results.length}`);
+      // console.log(`[MovieDetails]  youtubeVideo[0] : ${youtubeVideo.results[0]}`);
+      console.log(`[MovieDetails]  youtubeVideo key: ${youtubeVideo.key}`);
+      console.log(`[MovieDetails]  youtubeVideo name: ${youtubeVideo.name}`);
+      console.log(`[MovieDetails]  youtubeVideo size: ${youtubeVideo.size}`);
+      console.log(`[MovieDetails]  youtubeVideo type: ${youtubeVideo.type}`);
+      // return (<MoviePlayer/>);
+      // return (<MoviePlayer youtubeVideoKey={youtubeVideo.results[0].key}/>);
+      
+
+      setModalOpen(true);
     }
+
+    // useState를 사용하여 open상태를 변경한다. (open일때 true로 만들어 열리는 방식)
+    const [modalOpen, setModalOpen] = useState(false);
+    const openModal = () => {
+      setModalOpen(true);
+    };
+    const closeModal = () => {
+      setModalOpen(false);
+    };
 
     return (
       <Container  style={{ marginTop: marginTop }}>
@@ -188,11 +223,16 @@ function MovieDetails({ id, locationState }) {
                     <Card.Description>{movie.overview}</Card.Description>
                     <Card.Header as="h1"> </Card.Header>
                     
-                    {(youtubeVideo.results.length !== 0) ?
-                    <Button onClick={onClickWatchButton} primary>{youtubeVideo.results.length}Watch &nbsp;&nbsp;<Icon name='play circle outline'/></Button>
+                    {(youtubeVideo.length !== 0) ?
+                    // <Button onClick={onClickWatchButton} primary>{youtubeVideo.results.length}Watch &nbsp;&nbsp;<Icon name='play circle outline'/></Button>
+                    <Button onClick={onClickWatchButton} primary>Watch &nbsp;&nbsp;<Icon name='play circle outline'/></Button>
                     :
                     <Button onClick={onClickFakeButton}>{"Fake Watch"}<Icon name='play circle outline'/></Button>
                     }
+
+                    <MoviePlayer finalYoutubeVideo={finalYoutubeVideo} open={modalOpen} close={closeModal}>
+                      팝업창입니다. 쉽게 만들 수 있어요. 같이 만들어봐요!
+                    </MoviePlayer>
                     
                       
                   </Card.Content>

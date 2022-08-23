@@ -60,7 +60,6 @@ function Dashboard() {
                     </Menu.Item>
                 </Menu.Menu>
                 <Menu.Menu>
-                    {/* <Menu.Item link><Icon name='star'/>인기영화Top10</Menu.Item> */}
                     <Menu.Item header as={Link} to="/pop"><Icon name='star'/>인기영화<br/>Top10</Menu.Item>
                     <Menu.Item header as={Link} to="/per"><Icon name='heart'/>추천영화<br/>Top10</Menu.Item>
                     <Menu.Item header as={Link} to='/allmovie'><Icon name='film'/>모든 영화</Menu.Item>
@@ -78,7 +77,6 @@ function Dashboard() {
                         </select>
                         <Button as={Link} to="/" primary onClick={selecedNewAdmin}><Icon name='exchange'/><Icon name='user'/></Button>
                     </Menu.Item>
-                    {/* <Menu.Item link onClick={onLogout}>Log<br/>out</Menu.Item> */}
                     <Menu.Item ><Button onClick={onLogout}><Icon name='sign-out'/>logout</Button></Menu.Item>
                     
                 </Menu.Menu>

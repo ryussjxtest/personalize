@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext} from 'react';
 import './App.css';
 
 // React 라우터, UI 라이브러리

@@ -70,14 +70,21 @@ const LoginForm = () => {
 
   return (
     <>
-    <Image src="/image/unicorngym.png" centered size='medium' />
-    <Container text>
+    <Container style={{ marginTop: 150 }} textAlign='center' >
+
+      <h1> Welecom to Pebble Movie Recommendation</h1>
+    </Container>
+    <Container style={{ marginTop: 70 }} textAlign='center' >
+      <Image src="/image/pngwing.com.png" centered size='medium' />
+    </Container>
+
+    <Container style={{ marginTop: 70 }} >
     <form name="loginForm" onSubmit={onSubmit}>
       
       <div className="row">
 
         <div className="col-sm-3 col-md-6">
-          <label htmlFor="email" >Admin login : Select Admin </label>
+          <label htmlFor="email" >Admin login : Please Select Admin </label>
         </div>
         
         <div className="col-sm-9 col-md-6">

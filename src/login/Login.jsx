@@ -56,9 +56,9 @@ const LoginForm = () => {
       <h2> AWS Personalize Movie Recommendation</h2>
     </Container>
     <Container style={{ marginTop: 70 }} textAlign='center' >
-    <Image src="/image/unicorngym.png" centered size='medium' />
+      <Image src="/image/pngwing.com.png" centered size='medium' />
     </Container>
-    {/* <Container text> */}
+
     <Container style={{ marginTop: 70 }} >
     <form name="loginForm" onSubmit={onSubmit}>
       
